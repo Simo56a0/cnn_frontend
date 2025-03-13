@@ -1,0 +1,6 @@
+streamlit
+streamlit-webrtc
+gtts
+opencv-python
+numpy
+requests
