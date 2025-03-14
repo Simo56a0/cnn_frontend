@@ -96,16 +96,16 @@ with tab1:
         # if st.button("Translate Uploaded Video"):
         #     translate_video(uploaded_file.getvalue())
         st.video(uploaded_file, format="video/mp4")
-            if st.button("Translate Uploaded video"):
-                with st.spinner("Processing video..."):
-                    # Send the video to the backend
-                    files = {"file": uploaded_file.getvalue()}
-                    response = requests.post(BACKEND_URL, files=files)  # POST request to /predict
-                    if response.status_code == 200:
-                        translation = response.json().get("translation", "Unknown")
-                        st.success(f"Translation: {translation}")
-                    else:
-                        st.error("An error occurred during translation.")
+        if st.button("Translate Uploaded video"):
+            with st.spinner("Processing video..."):
+                # Send the video to the backend
+                files = {"file": uploaded_file.getvalue()}
+                response = requests.post(BACKEND_URL, files=files)  # POST request to /predict
+                if response.status_code == 200:
+                    translation = response.json().get("translation", "Unknown")
+                    st.success(f"Translation: {translation}")
+                else:
+                    st.error("An error occurred during translation.")
 # Tab 2: Use Webcam
 with tab2:
     st.header("Use Your Webcam")
