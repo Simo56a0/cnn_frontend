@@ -95,8 +95,8 @@ with tab1:
         # st.video(uploaded_file, format="video/mp4")
         # if st.button("Translate Uploaded Video"):
         #     translate_video(uploaded_file.getvalue())
-        st.video(uploaded_file)
-            if st.button("Translate"):
+        st.video(uploaded_file, format="video/mp4")
+            if st.button("Translate Uploaded video"):
                 with st.spinner("Processing video..."):
                     # Send the video to the backend
                     files = {"file": uploaded_file.getvalue()}
