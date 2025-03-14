@@ -7,7 +7,7 @@ import numpy as np
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase
 
 # Replace with your Render backend URL
-BACKEND_URL = "https://cnn-backend-604g.onrender.com"
+BACKEND_URL = "https://cnn-backend-604g.onrender.com/predict"
 
 # Custom CSS for styling
 st.markdown(
@@ -92,10 +92,20 @@ with tab1:
     st.header("Upload a Video")
     uploaded_file = st.file_uploader("Choose a video file...", type=["mp4", "avi", "mov"])
     if uploaded_file is not None:
-        st.video(uploaded_file, format="video/mp4")
-        if st.button("Translate Uploaded Video"):
-            translate_video(uploaded_file.getvalue())
-
+        # st.video(uploaded_file, format="video/mp4")
+        # if st.button("Translate Uploaded Video"):
+        #     translate_video(uploaded_file.getvalue())
+        st.video(uploaded_file)
+            if st.button("Translate"):
+                with st.spinner("Processing video..."):
+                    # Send the video to the backend
+                    files = {"file": uploaded_file.getvalue()}
+                    response = requests.post(BACKEND_URL, files=files)  # POST request to /predict
+                    if response.status_code == 200:
+                        translation = response.json().get("translation", "Unknown")
+                        st.success(f"Translation: {translation}")
+                    else:
+                        st.error("An error occurred during translation.")
 # Tab 2: Use Webcam
 with tab2:
     st.header("Use Your Webcam")
