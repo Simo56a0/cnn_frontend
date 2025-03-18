@@ -42,24 +42,27 @@ st.markdown(
 
 # Function to send video to the backend and get translation
 def translate_video(video_bytes):
-    with st.spinner("Processing video..."):
-        files = {"file": video_bytes}
-        response = requests.post(BACKEND_URL, files=files)
-        
-        if response.status_code == 200:
-            translation = response.json().get("translation", "Unknown")
-            st.success("Translation complete!")
-            st.write(f"**Translation:** {translation}")
+    try:
+        with st.spinner("Processing video..."):
+            files = {"file": video_bytes}
+            response = requests.post(BACKEND_URL, files=files)
+            
+            if response.status_code == 200:
+                translation = response.json().get("translation", "Unknown")
+                st.success("Translation complete!")
+                st.write(f"**Translation:** {translation}")
 
-            # Convert translation to audio
-            tts = gTTS(translation)
-            tts.save("translation.mp3")
-            st.audio("translation.mp3", format="audio/mp3")
+                # Convert translation to audio
+                tts = gTTS(translation)
+                tts.save("translation.mp3")
+                st.audio("translation.mp3", format="audio/mp3")
 
-            # Clean up the audio file
-            os.remove("translation.mp3")
-        else:
-            st.error("An error occurred during translation.")
+                # Clean up the audio file
+                os.remove("translation.mp3")
+            else:
+                st.error(f"An error occurred during translation. Status code: {response.status_code}")
+    except Exception as e:
+        st.error(f"An error occurred: {str(e)}")
 
 # Webcam functionality
 class VideoProcessor(VideoTransformerBase):
@@ -92,20 +95,10 @@ with tab1:
     st.header("Upload a Video")
     uploaded_file = st.file_uploader("Choose a video file...", type=["mp4", "avi", "mov"])
     if uploaded_file is not None:
-        # st.video(uploaded_file, format="video/mp4")
-        # if st.button("Translate Uploaded Video"):
-        #     translate_video(uploaded_file.getvalue())
         st.video(uploaded_file, format="video/mp4")
-        if st.button("Translate Uploaded video"):
-            with st.spinner("Processing video..."):
-                # Send the video to the backend
-                files = {"file": uploaded_file.getvalue()}
-                response = requests.post(BACKEND_URL, files=files)  # POST request to /predict
-                if response.status_code == 200:
-                    translation = response.json().get("translation", "Unknown")
-                    st.success(f"Translation: {translation}")
-                else:
-                    st.error("An error occurred during translation.")
+        if st.button("Translate Uploaded Video"):
+            translate_video(uploaded_file.getvalue())
+
 # Tab 2: Use Webcam
 with tab2:
     st.header("Use Your Webcam")
